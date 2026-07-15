@@ -29,6 +29,7 @@ class FlakeManifest(BaseModel):
     language: str = "python"
     framework: str = "discord.py"
     min_framework_version: str = "2.0.0"
+    command_style: str = "hybrid"
     entry: str = "cog.py"
     exports: list[str] = []
     dependencies: FlakeDependency = FlakeDependency()

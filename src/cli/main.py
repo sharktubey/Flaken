@@ -71,7 +71,8 @@ def search(query: str):
     click.echo(f"Found {data['count']} flake(s):\n")
     for flake in data["flakes"]:
         tags = ", ".join(flake.get("tags", [])[:3])
-        click.echo(f"  {flake['id']:30s} {flake['name']}")
+        style_badge = f"[{flake.get('command_style', 'hybrid')}]"
+        click.echo(f"  {flake['id']:30s} {flake['name']:25s} {style_badge}")
         click.echo(f"  {'':30s} {flake['description']}")
         if tags:
             click.echo(f"  {'':30s} tags: {tags}")
@@ -160,6 +161,7 @@ def info(flake_id: str):
         click.echo(f"   Author: {m.author}")
         click.echo(f"   License: {m.license}")
         click.echo(f"   Framework: {m.framework}")
+        click.echo(f"   Command Style: {m.command_style}")
         click.echo(f"   Description: {m.description}")
         click.echo(f"   Tags: {', '.join(m.tags)}")
         click.echo(f"   Dependencies: {', '.join(m.dependencies.pip) or 'none'}")
@@ -180,6 +182,7 @@ def info(flake_id: str):
     click.echo(f"   Author: {m.author}")
     click.echo(f"   License: {m.license}")
     click.echo(f"   Framework: {m.framework}")
+    click.echo(f"   Command Style: {m.command_style}")
     click.echo(f"   Description: {m.description}")
     click.echo(f"   Tags: {', '.join(m.tags)}")
     click.echo(f"   Dependencies: {', '.join(m.dependencies.pip) or 'none'}")
