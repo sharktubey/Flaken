@@ -13,6 +13,18 @@ from flaken_core.installer import FlakeInstaller
 DEFAULT_REGISTRY = "https://flaken-api.onrender.com"
 CONFIG_FILE = "flaken.json"
 
+STYLE_ALIASES = {
+    "hb": "hybrid", "hybrid": "hybrid",
+    "p": "prefix", "pre": "prefix", "prefix": "prefix",
+    "ac": "appcmd", "app": "appcmd", "appcmd": "appcmd",
+}
+
+
+def _apply_style(content: str, style: str) -> str:
+    if style == "prefix":
+        return content.replace("hybrid_command", "command")
+    return content
+
 
 def _load_config(project_root: Path) -> RegistryConfig:
     config_path = project_root / CONFIG_FILE
@@ -82,7 +94,10 @@ def search(query: str):
 @cli.command()
 @click.argument("flake_id")
 @click.option("--force", is_flag=True, help="Overwrite if already installed")
-def add(flake_id: str, force: bool):
+@click.option("--style", "-s", default="hybrid",
+              type=click.Choice(["hybrid", "prefix", "appcmd"]),
+              help="Command style: hybrid | prefix | appcmd")
+def add(flake_id: str, force: bool, style: str):
     """Install a flake from the registry."""
     project_root = Path.cwd()
     registry = _get_registry_url(project_root)
@@ -100,13 +115,15 @@ def add(flake_id: str, force: bool):
         tmp_path = Path(tmpdir)
         files = data.get("files", {})
         for filename, content in files.items():
+            if filename.endswith(".py"):
+                content = _apply_style(content, style)
             file_path = tmp_path / filename
             file_path.parent.mkdir(parents=True, exist_ok=True)
             file_path.write_text(content, encoding="utf-8")
         flake_src = tmp_path / manifest.entry
         try:
             installed = installer.install(manifest, tmp_path, force=force)
-            click.echo(f"[OK] Installed flake: {manifest.name} v{manifest.version}")
+            click.echo(f"[OK] Installed flake: {manifest.name} v{manifest.version} [{style}]")
             click.echo(f"   Location: {installed.install_path}")
             if manifest.exports:
                 click.echo(f"   Import: from flakes.{manifest.id.split('/')[-1]} import {', '.join(manifest.exports)}")
