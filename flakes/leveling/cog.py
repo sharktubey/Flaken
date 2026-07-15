@@ -68,6 +68,7 @@ class LevelingSystem(commands.Cog):
 
     @commands.command(name="rank")
     @commands.guild_only()
+    @commands.cooldown(1, 3, commands.BucketType.user)
     async def rank(self, ctx: commands.Context, member: Optional[discord.Member] = None):
         target = member or ctx.author
         key = f"{ctx.guild.id}:{target.id}"
@@ -79,7 +80,7 @@ class LevelingSystem(commands.Cog):
         embed.add_field(name="Level", value=str(entry["level"]))
         embed.add_field(name="XP", value=str(entry["xp"]))
         embed.set_thumbnail(url=target.display_avatar.url)
-        await ctx.send(embed=embed)
+        await ctx.channel.send(embed=embed)
 
     @commands.command(name="leaderboard")
     @commands.guild_only()
