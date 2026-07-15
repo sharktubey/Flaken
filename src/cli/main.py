@@ -26,6 +26,19 @@ def _apply_style(content: str, style: str) -> str:
     return content
 
 
+def _compare_versions(a: str, b: str) -> int:
+    a_parts = [int(x) for x in a.split(".")]
+    b_parts = [int(x) for x in b.split(".")]
+    for i in range(max(len(a_parts), len(b_parts))):
+        av = a_parts[i] if i < len(a_parts) else 0
+        bv = b_parts[i] if i < len(b_parts) else 0
+        if av < bv:
+            return -1
+        if av > bv:
+            return 1
+    return 0
+
+
 def _load_config(project_root: Path) -> RegistryConfig:
     config_path = project_root / CONFIG_FILE
     if config_path.exists():
@@ -143,6 +156,52 @@ def remove(flake_id: str):
         click.echo(f"[OK] Removed flake: {flake_id}")
     else:
         click.echo(f"[!] Flake '{flake_id}' not found.")
+
+
+@cli.command()
+def update():
+    """Check for and install updates for all flakes."""
+    project_root = Path.cwd()
+    registry = _get_registry_url(project_root)
+    installer = FlakeInstaller(project_root)
+    installed = installer.get_installed()
+    if not installed:
+        click.echo("No flakes installed.")
+        return
+    updated = 0
+    for flake in installed:
+        m = flake.manifest
+        name = m.id.split("/")[-1]
+        try:
+            resp = httpx.get(f"{registry}/api/v1/flakes/{name}", timeout=10)
+            resp.raise_for_status()
+            remote = FlakeManifest(**resp.json())
+        except Exception:
+            click.echo(f"[!] Could not check {m.id} — registry unreachable.")
+            continue
+        if _compare_versions(m.version, remote.version) >= 0:
+            click.echo(f"   {m.id} v{m.version} — up to date")
+            continue
+        try:
+            dl = httpx.get(f"{registry}/api/v1/flakes/{name}/download", timeout=15)
+            dl.raise_for_status()
+            data = dl.json()
+        except Exception:
+            click.echo(f"[!] Failed to download {m.id} v{remote.version}")
+            continue
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp_path = Path(tmpdir)
+            for filename, content in data.get("files", {}).items():
+                file_path = tmp_path / filename
+                file_path.parent.mkdir(parents=True, exist_ok=True)
+                file_path.write_text(content, encoding="utf-8")
+            installer.install(remote, tmp_path, force=True)
+        click.echo(f"   {m.id} v{m.version} -> v{remote.version}")
+        updated += 1
+    if updated:
+        click.echo(f"[OK] Updated {updated} flake(s).")
+    else:
+        click.echo("[OK] All flakes up to date.")
 
 
 @cli.command()
