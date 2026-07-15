@@ -8,7 +8,7 @@ from discord.ext import commands
 
 
 class LevelingSystem(commands.Cog):
-    """XP & leveling — tracks messages, awards XP, assigns roles, and shows leaderboards."""
+    """XP & leveling -- tracks messages, awards XP, and shows leaderboards."""
 
     def __init__(
         self,
@@ -68,7 +68,6 @@ class LevelingSystem(commands.Cog):
 
     @commands.hybrid_command(name="rank")
     @commands.guild_only()
-    @commands.cooldown(1, 3, commands.BucketType.user)
     async def rank(self, ctx: commands.Context, member: Optional[discord.Member] = None):
         target = member or ctx.author
         key = f"{ctx.guild.id}:{target.id}"
@@ -80,7 +79,7 @@ class LevelingSystem(commands.Cog):
         embed.add_field(name="Level", value=str(entry["level"]))
         embed.add_field(name="XP", value=str(entry["xp"]))
         embed.set_thumbnail(url=target.display_avatar.url)
-        await ctx.channel.send(embed=embed)
+        await ctx.send(embed=embed)
 
     @commands.hybrid_command(name="leaderboard")
     @commands.guild_only()

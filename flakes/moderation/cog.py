@@ -9,7 +9,11 @@ from discord.ext import commands
 class ModerationSuite(commands.Cog):
     """Warn, kick, ban, purge, timeout -- full moderation toolkit."""
 
-    def __init__(self, bot: commands.Bot, warn_data_path: str = "warns.json"):
+    def __init__(
+        self,
+        bot: commands.Bot,
+        warn_data_path: str = "warns.json",
+    ):
         self.bot = bot
         self.warn_path = Path(warn_data_path)
         self.warns: dict[str, list[dict]] = {}
@@ -44,7 +48,7 @@ class ModerationSuite(commands.Cog):
     @commands.bot_has_permissions(manage_messages=True)
     async def purge(self, ctx: commands.Context, amount: int):
         deleted = await ctx.channel.purge(limit=min(amount, 100) + 1)
-        msg = await ctx.send(f"Deleted {len(deleted) - 1} messages", delete_after=3)
+        await ctx.send(f"Deleted {len(deleted) - 1} messages", delete_after=3)
 
     @commands.hybrid_command(name="warn")
     @commands.guild_only()
@@ -53,7 +57,11 @@ class ModerationSuite(commands.Cog):
         uid = str(member.id)
         if uid not in self.warns:
             self.warns[uid] = []
-        self.warns[uid].append({"reason": reason, "by": str(ctx.author), "at": ctx.message.created_at.isoformat()})
+        self.warns[uid].append({
+            "reason": reason,
+            "by": str(ctx.author),
+            "at": ctx.message.created_at.isoformat(),
+        })
         self._save()
         await ctx.send(f"Warned {member.mention} | Reason: {reason} (Total warns: {len(self.warns[uid])})")
 
