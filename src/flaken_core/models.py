@@ -1,0 +1,54 @@
+from __future__ import annotations
+from pydantic import BaseModel, Field
+from typing import Optional
+from datetime import datetime
+
+
+class FlakeDependency(BaseModel):
+    pip: list[str] = []
+    flakes: list[str] = []
+
+
+class FlakeConfigProperty(BaseModel):
+    type: str = "string"
+    default: object = None
+    description: str = ""
+
+
+class FlakeConfig(BaseModel):
+    properties: dict[str, FlakeConfigProperty] = {}
+
+
+class FlakeManifest(BaseModel):
+    id: str
+    name: str
+    version: str = "1.0.0"
+    description: str = ""
+    author: str = "Flaken"
+    license: str = "MIT"
+    language: str = "python"
+    framework: str = "discord.py"
+    min_framework_version: str = "2.0.0"
+    entry: str = "cog.py"
+    exports: list[str] = []
+    dependencies: FlakeDependency = FlakeDependency()
+    config: FlakeConfig = FlakeConfig()
+    tags: list[str] = []
+    created_at: str = ""
+    updated_at: str = ""
+
+    def dict(self, *args, **kwargs):
+        d = super().model_dump(*args, **kwargs)
+        return d
+
+
+class InstalledFlake(BaseModel):
+    manifest: FlakeManifest
+    install_path: str
+    installed_at: str = "unknown"
+
+
+class RegistryConfig(BaseModel):
+    registry_url: str = "https://registry.flaken.dev"
+    flakes_dir: str = "flakes"
+    auto_install_deps: bool = True

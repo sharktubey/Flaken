@@ -1,0 +1,39 @@
+{
+  "id": "flaken/leveling",
+  "name": "Leveling System",
+  "version": "1.0.0",
+  "description": "XP/leveling system with roles, rank cards, and leaderboard",
+  "author": "Flaken",
+  "license": "MIT",
+  "language": "python",
+  "framework": "discord.py",
+  "min_framework_version": "2.0.0",
+  "entry": "cog.py",
+  "exports": ["LevelingSystem"],
+  "dependencies": {
+    "pip": ["aiofiles>=23.0.0"],
+    "flakes": []
+  },
+  "config": {
+    "properties": {
+      "xp_per_message": {
+        "type": "number",
+        "default": 15,
+        "description": "XP awarded per message"
+      },
+      "xp_cooldown": {
+        "type": "number",
+        "default": 60,
+        "description": "Cooldown in seconds between XP grants"
+      },
+      "levels": {
+        "type": "object",
+        "default": {"1": 0, "5": 100, "10": 500, "15": 1500, "20": 5000},
+        "description": "Level thresholds {level: xp_required}"
+      }
+    }
+  },
+  "tags": ["leveling", "xp", "ranks", "leaderboard", "discord"],
+  "created_at": "2026-07-15T00:00:00Z",
+  "updated_at": "2026-07-15T00:00:00Z"
+}

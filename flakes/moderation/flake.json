@@ -1,0 +1,20 @@
+{
+  "id": "flaken/moderation",
+  "name": "Moderation Suite",
+  "version": "1.0.0",
+  "description": "Warn, kick, ban, purge, mute, and logging for Discord servers",
+  "author": "Flaken",
+  "license": "MIT",
+  "language": "python",
+  "framework": "discord.py",
+  "min_framework_version": "2.0.0",
+  "entry": "cog.py",
+  "exports": ["ModerationSuite"],
+  "dependencies": {
+    "pip": [],
+    "flakes": []
+  },
+  "tags": ["moderation", "warn", "kick", "ban", "purge", "mute", "discord"],
+  "created_at": "2026-07-15T00:00:00Z",
+  "updated_at": "2026-07-15T00:00:00Z"
+}
