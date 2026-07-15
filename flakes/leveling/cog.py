@@ -66,7 +66,7 @@ class LevelingSystem(commands.Cog):
                 f"Level up! {message.author.mention} reached level {entry['level']}!"
             )
 
-    @commands.command(name="rank")
+    @commands.hybrid_command(name="rank")
     @commands.guild_only()
     @commands.cooldown(1, 3, commands.BucketType.user)
     async def rank(self, ctx: commands.Context, member: Optional[discord.Member] = None):
@@ -82,7 +82,7 @@ class LevelingSystem(commands.Cog):
         embed.set_thumbnail(url=target.display_avatar.url)
         await ctx.channel.send(embed=embed)
 
-    @commands.command(name="leaderboard")
+    @commands.hybrid_command(name="leaderboard")
     @commands.guild_only()
     async def leaderboard(self, ctx: commands.Context):
         guild_data = {

@@ -29,14 +29,14 @@ class WelcomeSystem(commands.Cog):
             if role:
                 await member.add_roles(role)
 
-    @commands.command(name="setwelcome")
+    @commands.hybrid_command(name="setwelcome")
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
     async def setwelcome(self, ctx: commands.Context, channel: discord.TextChannel):
         self.welcome_channel_name = channel.name
         await ctx.send(f"Welcome channel set to {channel.mention}")
 
-    @commands.command(name="setwelcomemsg")
+    @commands.hybrid_command(name="setwelcomemsg")
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
     async def setwelcomemsg(self, ctx: commands.Context, *, message: str):

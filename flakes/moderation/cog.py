@@ -22,7 +22,7 @@ class ModerationSuite(commands.Cog):
     def _save(self):
         self.warn_path.write_text(json.dumps(self.warns, indent=2))
 
-    @commands.command(name="kick")
+    @commands.hybrid_command(name="kick")
     @commands.guild_only()
     @commands.has_permissions(kick_members=True)
     @commands.bot_has_permissions(kick_members=True)
@@ -30,7 +30,7 @@ class ModerationSuite(commands.Cog):
         await member.kick(reason=reason)
         await ctx.send(f"Kicked {member.mention} | Reason: {reason}")
 
-    @commands.command(name="ban")
+    @commands.hybrid_command(name="ban")
     @commands.guild_only()
     @commands.has_permissions(ban_members=True)
     @commands.bot_has_permissions(ban_members=True)
@@ -38,7 +38,7 @@ class ModerationSuite(commands.Cog):
         await member.ban(reason=reason)
         await ctx.send(f"Banned {member.mention} | Reason: {reason}")
 
-    @commands.command(name="purge")
+    @commands.hybrid_command(name="purge")
     @commands.guild_only()
     @commands.has_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
@@ -46,7 +46,7 @@ class ModerationSuite(commands.Cog):
         deleted = await ctx.channel.purge(limit=min(amount, 100) + 1)
         msg = await ctx.send(f"Deleted {len(deleted) - 1} messages", delete_after=3)
 
-    @commands.command(name="warn")
+    @commands.hybrid_command(name="warn")
     @commands.guild_only()
     @commands.has_permissions(moderate_members=True)
     async def warn(self, ctx: commands.Context, member: discord.Member, *, reason: str = "No reason provided"):
@@ -57,7 +57,7 @@ class ModerationSuite(commands.Cog):
         self._save()
         await ctx.send(f"Warned {member.mention} | Reason: {reason} (Total warns: {len(self.warns[uid])})")
 
-    @commands.command(name="warns")
+    @commands.hybrid_command(name="warns")
     @commands.guild_only()
     @commands.has_permissions(moderate_members=True)
     async def warns(self, ctx: commands.Context, member: discord.Member):
@@ -69,7 +69,7 @@ class ModerationSuite(commands.Cog):
         lines = [f"{i+1}. {e['reason']} (by {e['by']})" for i, e in enumerate(entries)]
         await ctx.send(f"**Warns for {member.display_name}**\n" + "\n".join(lines))
 
-    @commands.command(name="timeout")
+    @commands.hybrid_command(name="timeout")
     @commands.guild_only()
     @commands.has_permissions(moderate_members=True)
     @commands.bot_has_permissions(moderate_members=True)
