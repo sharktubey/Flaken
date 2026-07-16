@@ -1,7 +1,6 @@
 from __future__ import annotations
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from typing import Optional
-from datetime import datetime
 
 
 class FlakeDependency(BaseModel):
@@ -37,19 +36,3 @@ class FlakeManifest(BaseModel):
     tags: list[str] = []
     created_at: str = ""
     updated_at: str = ""
-
-    def dict(self, *args, **kwargs):
-        d = super().model_dump(*args, **kwargs)
-        return d
-
-
-class InstalledFlake(BaseModel):
-    manifest: FlakeManifest
-    install_path: str
-    installed_at: str = "unknown"
-
-
-class RegistryConfig(BaseModel):
-    registry_url: str = "https://registry.flaken.dev"
-    flakes_dir: str = "flakes"
-    auto_install_deps: bool = True
