@@ -1,4 +1,5 @@
 from __future__ import annotations
+from datetime import datetime
 from pydantic import BaseModel
 from typing import Optional
 
@@ -36,3 +37,15 @@ class FlakeManifest(BaseModel):
     tags: list[str] = []
     created_at: str = ""
     updated_at: str = ""
+
+
+class InstalledFlake(BaseModel):
+    manifest: FlakeManifest
+    install_path: str
+    installed_at: str = "unknown"
+
+
+class RegistryConfig(BaseModel):
+    registry_url: str = "https://flaken-api.onrender.com"
+    flakes_dir: str = "flakes"
+    auto_install_deps: bool = True
