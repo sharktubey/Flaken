@@ -21,7 +21,14 @@ await bot.add_cog(LevelingSystem(bot))
 - `flaken list` — List installed flakes
 - `flaken remove <flake>` — Remove a flake
 - `flaken info <flake>` — Show flake details
+- `flaken update` — Update all installed flakes to the latest version
 
 ## Documentation
 
-https://flaken.vercel.app
+https://flaken.xyz
+
+## Badges
+
+[![PyPI version](https://img.shields.io/pypi/v/flaken)](https://pypi.org/project/flaken/)
+[![Python version](https://img.shields.io/pypi/pyversions/flaken)](https://pypi.org/project/flaken/)
+[![License](https://img.shields.io/pypi/l/flaken)](https://github.com/sharktubey/Flaken/blob/master/LICENSE)
