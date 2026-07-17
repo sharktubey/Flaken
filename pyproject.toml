@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "flaken"
-version = "1.0.3"
+version = "1.0.4"
 description = "Drop a flake into your code — modular command snippets for Discord bots"
 readme = "README.md"
 authors = [
