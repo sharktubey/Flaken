@@ -1,5 +1,6 @@
 {
   "id": "flaken/reaction-roles",
+  "_deprecated": "use flaken/reaction_roles instead",
   "name": "Reaction Roles",
   "version": "1.0.0",
   "description": "Let users self-assign roles by reacting to a message. Supports multiple roles per message with custom emojis.",
