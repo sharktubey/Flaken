@@ -1,0 +1,35 @@
+{
+  "id": "flaken/tickets",
+  "name": "Ticket System",
+  "version": "1.0.0",
+  "description": "Support ticket system with buttons and persistent threads. Users create tickets, staff claim and close them.",
+  "author": "Flaken",
+  "license": "MIT",
+  "language": "python",
+  "framework": "discord.py",
+  "min_framework_version": "2.0.0",
+  "command_style": "hybrid",
+  "entry": "cog.py",
+  "exports": ["TicketSystem"],
+  "dependencies": {
+    "pip": [],
+    "flakes": []
+  },
+  "config": {
+    "properties": {
+      "category_name": {
+        "type": "string",
+        "default": "tickets",
+        "description": "Category name to create ticket channels in"
+      },
+      "staff_role_name": {
+        "type": "string",
+        "default": "Staff",
+        "description": "Role name that can manage tickets"
+      }
+    }
+  },
+  "tags": ["tickets", "support", "modmail", "discord.py"],
+  "created_at": "2026-07-16T00:00:00Z",
+  "updated_at": "2026-07-16T00:00:00Z"
+}
