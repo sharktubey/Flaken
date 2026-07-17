@@ -1,0 +1,21 @@
+{
+  "id": "flaken/help",
+  "name": "Help Command",
+  "version": "1.0.0",
+  "description": "Interactive help command with embed pages and buttons. Shows all available commands grouped by flake.",
+  "author": "Flaken",
+  "license": "MIT",
+  "language": "python",
+  "framework": "discord.py",
+  "min_framework_version": "2.0.0",
+  "command_style": "hybrid",
+  "entry": "cog.py",
+  "exports": ["HelpCommand"],
+  "dependencies": {
+    "pip": [],
+    "flakes": []
+  },
+  "tags": ["help", "commands", "interactive", "discord.py"],
+  "created_at": "2026-07-17T00:00:00Z",
+  "updated_at": "2026-07-17T00:00:00Z"
+}

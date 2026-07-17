@@ -22,14 +22,31 @@ class ReactionRoles(commands.Cog):
     def _save(self):
         self.data_path.write_text(json.dumps(self.mappings, indent=2))
 
-    @commands.hybrid_command(name="setupreaction")
+    @commands.hybrid_command(name="reactionpanel")
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
-    async def setup_reaction(self, ctx: commands.Context, message_id: str, emoji: str, role: discord.Role):
-        """Link an emoji reaction to a role on a message."""
+    async def reaction_panel(self, ctx: commands.Context, title: str, channel: discord.TextChannel | None = None):
+        """Create a reaction role panel. Usage: !reactionpanel "Pick a role" #channel"""
+        target = channel or ctx.channel
+        embed = discord.Embed(
+            title=title,
+            description="React below to get your roles.\n\n",
+            color=discord.Color.purple(),
+        )
+        msg = await target.send(embed=embed)
+        self.mappings[msg.id] = {}
+        self._save()
+        await ctx.send(f"Reaction panel created in {target.mention}. Use `{ctx.prefix}addreaction {msg.id} :emoji: @role` to add options.")
+
+    @commands.hybrid_command(name="addreaction")
+    @commands.guild_only()
+    @commands.has_permissions(administrator=True)
+    async def add_reaction(self, ctx: commands.Context, message_id: str, emoji: str, role: discord.Role):
+        """Add a reaction-role to an existing panel message."""
         msg_id = int(message_id)
         if msg_id not in self.mappings:
-            self.mappings[msg_id] = {}
+            await ctx.send("No reaction panel found with that message ID. Create one with `!reactionpanel` first.")
+            return
         self.mappings[msg_id][emoji] = role.id
         self._save()
 
@@ -39,13 +56,18 @@ class ReactionRoles(commands.Cog):
         except Exception:
             pass
 
-        await ctx.send(f"Reaction role set: {emoji} -> {role.name}")
+        embed = discord.Embed(
+            title="Reaction Roles",
+            description=f"{emoji} -> {role.mention}",
+            color=discord.Color.purple(),
+        )
+        await ctx.send(embed=embed)
 
     @commands.hybrid_command(name="removereaction")
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
     async def remove_reaction(self, ctx: commands.Context, message_id: str, emoji: str):
-        """Remove a reaction-role mapping."""
+        """Remove a reaction-role from a panel."""
         msg_id = int(message_id)
         if msg_id in self.mappings and emoji in self.mappings[msg_id]:
             del self.mappings[msg_id][emoji]
@@ -72,7 +94,7 @@ class ReactionRoles(commands.Cog):
         if not role:
             return
         member = guild.get_member(payload.user_id)
-        if member:
+        if member and role not in member.roles:
             await member.add_roles(role)
 
     @commands.Cog.listener()
@@ -91,7 +113,7 @@ class ReactionRoles(commands.Cog):
         if not role:
             return
         member = guild.get_member(payload.user_id)
-        if member:
+        if member and role in member.roles:
             await member.remove_roles(role)
 
 

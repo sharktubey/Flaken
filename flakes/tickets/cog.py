@@ -36,15 +36,16 @@ class TicketSystem(commands.Cog):
 
     @commands.hybrid_command(name="close")
     @commands.guild_only()
+    @commands.bot_has_permissions(manage_channels=True)
     async def close(self, ctx: commands.Context):
         """Close the current ticket channel."""
         staff_role = discord.utils.get(ctx.guild.roles, name=self.staff_role_name)
         if staff_role and staff_role not in ctx.author.roles:
             if ctx.author != ctx.guild.owner:
-                await ctx.send("Only staff can close tickets.")
+                await ctx.send("Only staff can close tickets.", ephemeral=True)
                 return
-        await ctx.send("Ticket closed. Deleting channel in 5 seconds...", delete_after=4)
-        await ctx.channel.delete(reason="Ticket closed")
+        await ctx.send("Closing ticket in 5 seconds...")
+        await ctx.channel.delete(reason=f"Ticket closed by {ctx.author}")
 
     @commands.Cog.listener()
     async def on_interaction(self, interaction: discord.Interaction):
