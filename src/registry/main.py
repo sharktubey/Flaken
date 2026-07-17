@@ -200,7 +200,7 @@ bot.run(token)
 
         readme = f"""# Flaken Bot
 
-Generated with Flaken (https://flaken.vercel.app)
+Generated with Flaken (https://flaken.xyz)
 
 ## Setup
 
@@ -215,7 +215,7 @@ Generated with Flaken (https://flaken.vercel.app)
 
 ## Hosting (free)
 
-- Render: https://flaken-api.onrender.com/health
+- Render: https://api.flaken.xyz/health
 - Railway: https://railway.app
 - Fly.io: https://fly.io
 

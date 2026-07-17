@@ -46,6 +46,6 @@ class InstalledFlake(BaseModel):
 
 
 class RegistryConfig(BaseModel):
-    registry_url: str = "https://flaken-api.onrender.com"
+    registry_url: str = "https://api.flaken.xyz"
     flakes_dir: str = "flakes"
     auto_install_deps: bool = True

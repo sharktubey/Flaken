@@ -10,7 +10,7 @@ import httpx
 from flaken_core.models import FlakeManifest, RegistryConfig
 from flaken_core.installer import FlakeInstaller
 
-DEFAULT_REGISTRY = "https://flaken-api.onrender.com"
+DEFAULT_REGISTRY = "https://api.flaken.xyz"
 CONFIG_FILE = "flaken.json"
 
 STYLE_ALIASES = {
