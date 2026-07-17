@@ -53,7 +53,7 @@ class HelpCommand(commands.Cog):
 
 class HelpView(discord.ui.View):
     def __init__(self, pages: list[discord.Embed], author: discord.Member):
-        super().__init__(timeout=60)
+        super().__init__(timeout=None)
         self.pages = pages
         self.author = author
         self.current = 0
@@ -80,10 +80,6 @@ class HelpView(discord.ui.View):
         self.current += 1
         self._update_buttons()
         await interaction.response.edit_message(embed=self.pages[self.current], view=self)
-
-    async def on_timeout(self):
-        for item in self.children:
-            item.disabled = True
 
 
 async def setup(bot: commands.Bot):
