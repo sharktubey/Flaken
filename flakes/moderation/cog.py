@@ -6,6 +6,9 @@ import discord
 from discord.ext import commands
 
 
+BLOCKED_ROLE_ID = 1527813495188357331
+
+
 class ModerationSuite(commands.Cog):
     """Warn, kick, ban, purge, timeout -- full moderation toolkit."""
 
@@ -18,6 +21,12 @@ class ModerationSuite(commands.Cog):
         self.warn_path = Path(warn_data_path)
         self.warns: dict[str, list[dict]] = {}
         self._load()
+
+    async def cog_check(self, ctx: commands.Context) -> bool:
+        if ctx.guild and any(r.id == BLOCKED_ROLE_ID for r in ctx.author.roles):
+            await ctx.send("You are not allowed to use moderation commands.", ephemeral=True)
+            return False
+        return True
 
     def _load(self):
         if self.warn_path.exists():
