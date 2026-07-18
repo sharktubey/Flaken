@@ -76,7 +76,7 @@ class LevelingSystem(commands.Cog):
             embed.set_footer(text="Keep chatting to earn more XP")
             await message.channel.send(embed=embed)
 
-    @commands.hybrid_command(name="rank")
+    @commands.hybrid_command(name="rank", description="View your rank and XP for this server")
     @commands.guild_only()
     async def rank(self, ctx: commands.Context, member: Optional[discord.Member] = None):
         target = member or ctx.author
@@ -97,7 +97,7 @@ class LevelingSystem(commands.Cog):
         embed.set_footer(text="Flaken Leveling System")
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="leaderboard")
+    @commands.hybrid_command(name="leaderboard", description="Show the server XP leaderboard top 10")
     @commands.guild_only()
     async def leaderboard(self, ctx: commands.Context):
         guild_data = {

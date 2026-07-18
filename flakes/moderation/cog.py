@@ -42,7 +42,7 @@ class ModerationSuite(commands.Cog):
             timestamp=datetime.now(),
         )
 
-    @commands.hybrid_command(name="kick")
+    @commands.hybrid_command(name="kick", description="Kick a member from the server")
     @commands.guild_only()
     @commands.has_permissions(kick_members=True)
     @commands.bot_has_permissions(kick_members=True)
@@ -53,7 +53,7 @@ class ModerationSuite(commands.Cog):
         embed.add_field(name="Moderator", value=ctx.author.mention)
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="ban")
+    @commands.hybrid_command(name="ban", description="Ban a member from the server")
     @commands.guild_only()
     @commands.has_permissions(ban_members=True)
     @commands.bot_has_permissions(ban_members=True)
@@ -64,7 +64,7 @@ class ModerationSuite(commands.Cog):
         embed.add_field(name="Moderator", value=ctx.author.mention)
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="purge")
+    @commands.hybrid_command(name="purge", description="Delete recent messages in bulk (max 100)")
     @commands.guild_only()
     @commands.has_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
@@ -73,7 +73,7 @@ class ModerationSuite(commands.Cog):
         embed = self._make_embed("Messages Purged", f"Deleted {len(deleted) - 1} messages.", discord.Color.dark_blue())
         await ctx.send(embed=embed, delete_after=3)
 
-    @commands.hybrid_command(name="warn")
+    @commands.hybrid_command(name="warn", description="Warn a member and log the warning")
     @commands.guild_only()
     @commands.has_permissions(moderate_members=True)
     async def warn(self, ctx: commands.Context, member: discord.Member, *, reason: str = "No reason provided"):
@@ -93,7 +93,7 @@ class ModerationSuite(commands.Cog):
         embed.add_field(name="Moderator", value=ctx.author.mention)
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="warns")
+    @commands.hybrid_command(name="warns", description="Check warning history for a member")
     @commands.guild_only()
     @commands.has_permissions(moderate_members=True)
     async def warns(self, ctx: commands.Context, member: discord.Member):
@@ -113,7 +113,7 @@ class ModerationSuite(commands.Cog):
         embed.set_footer(text=f"Total: {len(entries)} warnings")
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="timeout")
+    @commands.hybrid_command(name="timeout", description="Timeout a member for a set number of minutes")
     @commands.guild_only()
     @commands.has_permissions(moderate_members=True)
     @commands.bot_has_permissions(moderate_members=True)

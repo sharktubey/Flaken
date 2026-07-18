@@ -39,7 +39,7 @@ class WelcomeSystem(commands.Cog):
             if role:
                 await member.add_roles(role)
 
-    @commands.hybrid_command(name="setwelcome")
+    @commands.hybrid_command(name="setwelcome", description="Set the channel for welcome messages")
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
     async def setwelcome(self, ctx: commands.Context, channel: discord.TextChannel):
@@ -52,7 +52,7 @@ class WelcomeSystem(commands.Cog):
         )
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="setwelcomemsg")
+    @commands.hybrid_command(name="setwelcomemsg", description="Set the welcome message text (use {member} for mention)")
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
     async def setwelcomemsg(self, ctx: commands.Context, *, message: str):

@@ -26,7 +26,7 @@ class ReactionRoles(commands.Cog):
     def _embed(self, title: str, desc: str, color: discord.Color) -> discord.Embed:
         return discord.Embed(title=title, description=desc, color=color, timestamp=datetime.now())
 
-    @commands.hybrid_command(name="reactionpanel")
+    @commands.hybrid_command(name="reactionpanel", description="Create a reaction role panel embed in a channel")
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
     async def reaction_panel(self, ctx: commands.Context, title: str, channel: discord.TextChannel | None = None):
@@ -44,7 +44,7 @@ class ReactionRoles(commands.Cog):
         self._save()
         await ctx.send(embed=self._embed("Panel Created", f"Panel created in {target.mention}. Message ID: `{msg.id}`", discord.Color.green()))
 
-    @commands.hybrid_command(name="addreaction")
+    @commands.hybrid_command(name="addreaction", description="Link an emoji reaction to a role on a panel")
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
     async def add_reaction(self, ctx: commands.Context, message_id: str, emoji: str, role: discord.Role):
@@ -62,7 +62,7 @@ class ReactionRoles(commands.Cog):
             pass
         await ctx.send(embed=self._embed("Reaction Added", f"{emoji} -> {role.mention}", discord.Color.purple()))
 
-    @commands.hybrid_command(name="removereaction")
+    @commands.hybrid_command(name="removereaction", description="Remove a reaction-role mapping from a panel")
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
     async def remove_reaction(self, ctx: commands.Context, message_id: str, emoji: str):

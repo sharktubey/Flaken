@@ -23,7 +23,7 @@ class TicketSystem(commands.Cog):
             category = await guild.create_category(self.category_name)
         return category
 
-    @commands.hybrid_command(name="ticketpanel")
+    @commands.hybrid_command(name="ticketpanel", description="Send the ticket creation button panel in the current channel")
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
     async def ticket_panel(self, ctx: commands.Context):
@@ -38,7 +38,7 @@ class TicketSystem(commands.Cog):
         view = TicketView(self)
         await ctx.send(embed=embed, view=view)
 
-    @commands.hybrid_command(name="close")
+    @commands.hybrid_command(name="close", description="Close and delete the current ticket channel")
     @commands.guild_only()
     @commands.bot_has_permissions(manage_channels=True)
     async def close(self, ctx: commands.Context):
