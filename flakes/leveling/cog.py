@@ -1,5 +1,6 @@
 import json
 import random
+from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
@@ -41,6 +42,10 @@ class LevelingSystem(commands.Cog):
                 level = int(lvl)
         return level
 
+    def _xp_for_next_level(self, xp: int) -> int:
+        next_lvl = self._get_level(xp) + 1
+        return self.levels.get(str(next_lvl), xp + 100) - xp
+
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         if message.author.bot or not message.guild:
@@ -62,9 +67,14 @@ class LevelingSystem(commands.Cog):
         self.data[key] = entry
         self._save()
         if entry["level"] > old_level:
-            await message.channel.send(
-                f"Level up! {message.author.mention} reached level {entry['level']}!"
+            embed = discord.Embed(
+                title="Level Up!",
+                description=f"{message.author.mention} reached **level {entry['level']}**!",
+                color=discord.Color.green(),
+                timestamp=datetime.now(),
             )
+            embed.set_footer(text="Keep chatting to earn more XP")
+            await message.channel.send(embed=embed)
 
     @commands.hybrid_command(name="rank")
     @commands.guild_only()
@@ -72,13 +82,19 @@ class LevelingSystem(commands.Cog):
         target = member or ctx.author
         key = f"{ctx.guild.id}:{target.id}"
         entry = self.data.get(key, {"xp": 0, "level": 1})
+        xp_needed = self._xp_for_next_level(entry["xp"])
+        next_lvl = entry["level"] + 1
+
         embed = discord.Embed(
             title=f"{target.display_name}'s Rank",
             color=discord.Color.blue(),
+            timestamp=datetime.now(),
         )
-        embed.add_field(name="Level", value=str(entry["level"]))
-        embed.add_field(name="XP", value=str(entry["xp"]))
         embed.set_thumbnail(url=target.display_avatar.url)
+        embed.add_field(name="Level", value=str(entry["level"]), inline=True)
+        embed.add_field(name="Total XP", value=str(entry["xp"]), inline=True)
+        embed.add_field(name="Next Level", value=f"{xp_needed} XP to level {next_lvl}", inline=False)
+        embed.set_footer(text="Flaken Leveling System")
         await ctx.send(embed=embed)
 
     @commands.hybrid_command(name="leaderboard")
@@ -92,16 +108,20 @@ class LevelingSystem(commands.Cog):
             await ctx.send("No data yet -- start chatting to earn XP!")
             return
         lines = []
+        medals = [":first_place:", ":second_place:", ":third_place:"] + [""] * 7
         for i, (key, entry) in enumerate(sorted_users, 1):
             user_id = key.split(":")[1]
             user = ctx.guild.get_member(int(user_id))
             name = user.display_name if user else f"Unknown ({user_id})"
-            lines.append(f"**{i}.** {name} -- Level {entry['level']} ({entry['xp']} XP)")
+            medal = medals[i - 1] if i <= 3 else f"`{i:2d}.`"
+            lines.append(f"{medal} **{name}** -- Level {entry['level']} ({entry['xp']} XP)")
         embed = discord.Embed(
-            title="Leaderboard",
+            title="Server Leaderboard",
             description="\n".join(lines),
             color=discord.Color.gold(),
+            timestamp=datetime.now(),
         )
+        embed.set_footer(text="Top 10 by XP")
         await ctx.send(embed=embed)
 
 

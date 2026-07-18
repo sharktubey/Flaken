@@ -1,10 +1,9 @@
 import json
-from datetime import timedelta
+from datetime import datetime, timedelta
 from pathlib import Path
 
 import discord
 from discord.ext import commands
-
 
 BLOCKED_ROLE_ID = 1527813495188357331
 
@@ -35,13 +34,24 @@ class ModerationSuite(commands.Cog):
     def _save(self):
         self.warn_path.write_text(json.dumps(self.warns, indent=2))
 
+    def _make_embed(self, title: str, description: str, color: discord.Color) -> discord.Embed:
+        return discord.Embed(
+            title=title,
+            description=description,
+            color=color,
+            timestamp=datetime.now(),
+        )
+
     @commands.hybrid_command(name="kick")
     @commands.guild_only()
     @commands.has_permissions(kick_members=True)
     @commands.bot_has_permissions(kick_members=True)
     async def kick(self, ctx: commands.Context, member: discord.Member, *, reason: str = "No reason provided"):
         await member.kick(reason=reason)
-        await ctx.send(f"Kicked {member.mention} | Reason: {reason}")
+        embed = self._make_embed("Member Kicked", f"{member.mention} has been kicked.", discord.Color.orange())
+        embed.add_field(name="Reason", value=reason, inline=False)
+        embed.add_field(name="Moderator", value=ctx.author.mention)
+        await ctx.send(embed=embed)
 
     @commands.hybrid_command(name="ban")
     @commands.guild_only()
@@ -49,7 +59,10 @@ class ModerationSuite(commands.Cog):
     @commands.bot_has_permissions(ban_members=True)
     async def ban(self, ctx: commands.Context, member: discord.Member, *, reason: str = "No reason provided"):
         await member.ban(reason=reason)
-        await ctx.send(f"Banned {member.mention} | Reason: {reason}")
+        embed = self._make_embed("Member Banned", f"{member.mention} has been banned.", discord.Color.red())
+        embed.add_field(name="Reason", value=reason, inline=False)
+        embed.add_field(name="Moderator", value=ctx.author.mention)
+        await ctx.send(embed=embed)
 
     @commands.hybrid_command(name="purge")
     @commands.guild_only()
@@ -57,7 +70,8 @@ class ModerationSuite(commands.Cog):
     @commands.bot_has_permissions(manage_messages=True)
     async def purge(self, ctx: commands.Context, amount: int):
         deleted = await ctx.channel.purge(limit=min(amount, 100) + 1)
-        await ctx.send(f"Deleted {len(deleted) - 1} messages", delete_after=3)
+        embed = self._make_embed("Messages Purged", f"Deleted {len(deleted) - 1} messages.", discord.Color.dark_blue())
+        await ctx.send(embed=embed, delete_after=3)
 
     @commands.hybrid_command(name="warn")
     @commands.guild_only()
@@ -69,10 +83,15 @@ class ModerationSuite(commands.Cog):
         self.warns[uid].append({
             "reason": reason,
             "by": str(ctx.author),
-            "at": ctx.message.created_at.isoformat(),
+            "at": datetime.now().isoformat(),
         })
         self._save()
-        await ctx.send(f"Warned {member.mention} | Reason: {reason} (Total warns: {len(self.warns[uid])})")
+        total = len(self.warns[uid])
+        embed = self._make_embed("Member Warned", f"{member.mention} has been warned.", discord.Color.yellow())
+        embed.add_field(name="Reason", value=reason, inline=False)
+        embed.add_field(name="Total Warnings", value=str(total))
+        embed.add_field(name="Moderator", value=ctx.author.mention)
+        await ctx.send(embed=embed)
 
     @commands.hybrid_command(name="warns")
     @commands.guild_only()
@@ -83,8 +102,16 @@ class ModerationSuite(commands.Cog):
         if not entries:
             await ctx.send(f"{member.mention} has no warnings.")
             return
-        lines = [f"{i+1}. {e['reason']} (by {e['by']})" for i, e in enumerate(entries)]
-        await ctx.send(f"**Warns for {member.display_name}**\n" + "\n".join(lines))
+        lines = []
+        for i, e in enumerate(entries, 1):
+            lines.append(f"**{i}.** {e['reason']} — by {e['by']} on {e['at'][:10]}")
+        embed = self._make_embed(
+            f"Warnings for {member.display_name}",
+            "\n".join(lines),
+            discord.Color.yellow(),
+        )
+        embed.set_footer(text=f"Total: {len(entries)} warnings")
+        await ctx.send(embed=embed)
 
     @commands.hybrid_command(name="timeout")
     @commands.guild_only()
@@ -93,7 +120,11 @@ class ModerationSuite(commands.Cog):
     async def timeout(self, ctx: commands.Context, member: discord.Member, minutes: int, *, reason: str = "No reason"):
         duration = timedelta(minutes=minutes)
         await member.timeout(duration, reason=reason)
-        await ctx.send(f"Timed out {member.mention} for {minutes} min | Reason: {reason}")
+        embed = self._make_embed("Member Timed Out", f"{member.mention} has been timed out.", discord.Color.dark_orange())
+        embed.add_field(name="Duration", value=f"{minutes} minute(s)")
+        embed.add_field(name="Reason", value=reason, inline=False)
+        embed.add_field(name="Moderator", value=ctx.author.mention)
+        await ctx.send(embed=embed)
 
 
 async def setup(bot: commands.Bot):
